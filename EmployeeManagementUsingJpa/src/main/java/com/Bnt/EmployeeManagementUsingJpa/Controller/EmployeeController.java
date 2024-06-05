@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Bnt.EmployeeManagementUsingJpa.Exception.UserNotFoundException;
 import com.Bnt.EmployeeManagementUsingJpa.Model.Employee;
 import com.Bnt.EmployeeManagementUsingJpa.Service.EmployeeService;
 
@@ -33,6 +32,7 @@ public class EmployeeController {
     @PostMapping
     public ResponseEntity<Object> saveEmployee(@RequestBody Employee employee){
         logger.info(("The employee data is saved"));
+        try{
         Employee newEmp = employeeService.saveEmployee(employee);
         if(newEmp==null){
             return new ResponseEntity<Object>("Invalid data please insert valid data.",HttpStatus.NOT_ACCEPTABLE);
@@ -40,11 +40,15 @@ public class EmployeeController {
         else{
             return new ResponseEntity<Object>(newEmp,HttpStatus.OK);
         }
-       
+    }catch(Exception e){
+        logger.error("Exception",e);
+    }
+       return null;
     }
     
     @GetMapping
     public List<Employee> getAllEmployee(){
+        logger.info("Got all the Employees details");
         return employeeService.getAllEmployee();
     }
 
@@ -69,22 +73,42 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable("id")int id, @RequestBody Employee newEmployee){
+    public ResponseEntity<Object> updateEmployee(@PathVariable("id")int id, @RequestBody Employee newEmployee){
         logger.info("update the user with given id");
-        try{
-            newEmployee.setId(id);
-            Employee updatedEmployee = employeeService.updateEmployee(newEmployee);
-            return ResponseEntity.ok(updatedEmployee);
-        }catch(UserNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-       
+      try{
+          Employee employee = employeeService.updateEmployee(newEmployee);
+          if(employee==null){
+            return new ResponseEntity<Object>("User not found this id",HttpStatus.NOT_FOUND);
+          }
+          else{
+            return new ResponseEntity<Object>(employee,HttpStatus.OK);
+          }
+      }catch(Exception e){
+        logger.error("Exception", e);
+      }
+       return null ;
+
         
     }
 
     @DeleteMapping("/{id}")
-    public void  deleteEmployee(@PathVariable("id") int id){
-        employeeService.deleteEmployee(id);
+    public ResponseEntity<Object>  deleteEmployee(@PathVariable("id") int id){
+           boolean result = employeeService.deleteEmployee(id);
+        try{
+           
+            if(result==false){
+                return new ResponseEntity<Object>("UserNotFound With id",HttpStatus.NOT_FOUND);
+                
+            }
+            else{
+                return new ResponseEntity<Object>("Employee deleted Successfully",HttpStatus.OK);
+            }
+        }catch(Exception e){
+            logger.error("Exception", e);
+        }
+        return null;
     }
+
+
 } 
 

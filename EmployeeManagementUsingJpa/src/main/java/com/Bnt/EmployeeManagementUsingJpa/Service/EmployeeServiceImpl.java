@@ -62,16 +62,36 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee updateEmployee(Employee newEmployee) {
-    if(!employeeRepository.existsById(newEmployee.getId())){
-        throw new UserNotFoundException("Employee with thisid is not present", newEmployee.getId());
-    }
-      return employeeRepository.save(newEmployee);
-     
+        Employee employee = null;
+        try{
+          Optional<Employee> optionalEmployee =  employeeRepository.findById(newEmployee.getId());
+            if(optionalEmployee.isPresent()){
+              employee =   employeeRepository.save(newEmployee);
+             
+            }
+            else{
+                employee=null;
+                throw new  UserNotFoundException("User not found with id", newEmployee.getId());
+            }
+        }catch(UserNotFoundException e){
+            logger.error("UserNotFoundException", e);
+        }
+        return employee;
     }
 
     @Override
-    public void deleteEmployee(int id) {
-        employeeRepository.deleteById(id);
+    public boolean deleteEmployee(int id) {
+        try{
+            if(!employeeRepository.existsById(id))
+              throw new UserNotFoundException("UserNotFound with this id", id);
+              else{
+                employeeRepository.deleteById(id);
+                return true;
+              }
+        }catch(UserNotFoundException e){
+               logger.error("UserNotFoundException", e);
+        }
+        return false;
     }
     
 }
