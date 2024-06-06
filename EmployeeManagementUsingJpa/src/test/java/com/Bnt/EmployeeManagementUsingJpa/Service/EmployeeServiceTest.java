@@ -59,7 +59,8 @@ public class EmployeeServiceTest {
 
     @Test
     void updateEmployeeTest(){
-        Employee ExpectedResult = new Employee(1,"neha",9000);
+        Employee ExpectedResult = new Employee(16,"neha",9000);
+        when(employeeRepository.findById(ExpectedResult.getId())).thenReturn(Optional.of(ExpectedResult));
         when(employeeRepository.save(ExpectedResult)).thenReturn(ExpectedResult);
         Employee ActualResult = employeeServiceImpl.updateEmployee(ExpectedResult);
         assertEquals(ExpectedResult, ActualResult);
@@ -68,7 +69,9 @@ public class EmployeeServiceTest {
     @Test
     void deleteEmployeeTest(){
         int id=1;
-        employeeRepository.deleteById(id);
-        verify(employeeServiceImpl,times(1)).deleteEmployee(id);
+        when(employeeRepository.existsById(id)).thenReturn(true);
+        boolean result = employeeServiceImpl.deleteEmployee(id);
+        assertTrue(result);
+        verify(employeeRepository,times(1)).deleteById(id);
     }
 }
