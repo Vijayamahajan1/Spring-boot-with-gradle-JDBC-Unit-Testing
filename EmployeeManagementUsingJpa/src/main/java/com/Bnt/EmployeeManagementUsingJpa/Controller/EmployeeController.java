@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Bnt.EmployeeManagementUsingJpa.Exception.UserNotFoundException;
 import com.Bnt.EmployeeManagementUsingJpa.Model.Employee;
 import com.Bnt.EmployeeManagementUsingJpa.Service.EmployeeService;
 
@@ -89,6 +90,16 @@ public class EmployeeController {
        return null ;
 
         
+    }
+
+    @PutMapping("/update2/{id}")
+    public ResponseEntity<Object> updateEmployee2(@PathVariable ("id")int id, @RequestBody Employee newEmployee) {
+        try {
+            Employee updatedEmployee = employeeService.updateEmployee2(newEmployee);
+            return ResponseEntity.ok(updatedEmployee);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id "+ id);
+        }
     }
 
     @DeleteMapping("/{id}")

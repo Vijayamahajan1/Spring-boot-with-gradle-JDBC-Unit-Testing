@@ -93,5 +93,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         return false;
     }
+
+    @Override
+    public Employee updateEmployee2(Employee newEmployee) {
+     Optional<Employee> optionalEmployee =  employeeRepository.findById(newEmployee.getId()); 
+     if(optionalEmployee.isPresent()){
+        return employeeRepository.save(newEmployee);
+     } else{
+       throw new UserNotFoundException("User Not Found With id: " ,newEmployee.getId());
+     }
+        
+    }
     
 }
