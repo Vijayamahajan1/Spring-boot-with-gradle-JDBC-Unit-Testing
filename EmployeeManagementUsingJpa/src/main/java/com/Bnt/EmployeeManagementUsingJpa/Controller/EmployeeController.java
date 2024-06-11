@@ -74,11 +74,14 @@ public class EmployeeController {
         return null;
       
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateEmployee(@PathVariable("id")int id, @RequestBody Employee newEmployee){
         logger.info("update the user with given id");
       try{
+        Matcher nMatcher = nPattern.matcher(newEmployee.getName());
+        if(!nMatcher.matches()){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid name format");
+        }
           Employee employee = employeeService.updateEmployee(newEmployee);
           if(employee==null){
             return new ResponseEntity<Object>("User not found this id",HttpStatus.NOT_FOUND);
@@ -93,10 +96,10 @@ public class EmployeeController {
 
         
     }
-
+   
+    //Global Exception
     String Name_Regex = "^[a-zA-Z\\s]+$";
     Pattern nPattern = Pattern.compile(Name_Regex);
-
     @PutMapping("/update2/{id}")
     public ResponseEntity<Object> updateEmployee2(@PathVariable ("id")int id, @RequestBody Employee newEmployee) {
         try {

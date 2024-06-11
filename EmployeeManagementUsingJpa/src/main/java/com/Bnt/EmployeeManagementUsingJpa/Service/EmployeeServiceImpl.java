@@ -94,6 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return false;
     }
 
+    // For a global exception
     @Override
     public Employee updateEmployee2(Employee newEmployee) {
      Optional<Employee> optionalEmployee =  employeeRepository.findById(newEmployee.getId()); 
