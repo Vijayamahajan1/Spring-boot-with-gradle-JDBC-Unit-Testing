@@ -2,6 +2,8 @@ package com.Bnt.EmployeeManagementUsingJpa.Controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,11 +94,19 @@ public class EmployeeController {
         
     }
 
+    String Name_Regex = "^[a-zA-Z\\s]+$";
+    Pattern nPattern = Pattern.compile(Name_Regex);
+
     @PutMapping("/update2/{id}")
     public ResponseEntity<Object> updateEmployee2(@PathVariable ("id")int id, @RequestBody Employee newEmployee) {
         try {
+            Matcher nMatcher = nPattern.matcher(newEmployee.getName());
+            if(!nMatcher.matches()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid name format");
+            }
             Employee updatedEmployee = employeeService.updateEmployee2(newEmployee);
             return ResponseEntity.ok(updatedEmployee);
+            
         } catch (UserNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id "+ id);
         }
