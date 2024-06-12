@@ -50,7 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         try{
             if(!optionalEmployee.isPresent()){
-                  optionalEmployee=null;
+                optionalEmployee=null;
                 throw new UserNotFoundException("User not Found with id", id);
             }
         
